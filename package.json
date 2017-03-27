@@ -1,0 +1,23 @@
+{
+  "name": "seoai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/index.js",
+  "dependencies": {
+    "babel-core": "^6.24.0",
+    "fs": "0.0.1-security",
+    "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.0",
+    "babel-preset-latest": "^6.24.0",
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "start": "nodemon app/index.js --exec babel-node --presets latest",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
