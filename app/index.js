@@ -143,13 +143,22 @@ const readSitemapQueue = () => {
 		})
 		.then((json)=>{
 			if(json){
-				return sendUrlSet(json.urlset.url, 0);
+				for(var url of json.urlset.url){
+					let matches = url.loc[0].match(/^https:\/\/www\.woorank\.com\/en\/www\/(.+)/i);
+					if(matches){
+						sqs.sendMessage('woorank-docs', matches[0]).then((result) => {
+							console.log('Added doc '+ matches[0])
+						}).catch((err)=>{
+							return false
+						});
+					}
+				}
+				return true;
 			}else{
 				return null;
 			}
 		})
 		.then((result) => {
-			console.log(result);
 			if(result){
 				return sqs.deleteMessage('woorank-sitemap', message.ReceiptHandle);
 			}else{
