@@ -208,7 +208,8 @@ const saveDoc = (counter) => {
 	});
 }
 
-readSitemapQueue();
+//readSitemapQueue();
+saveDoc(0)
 
 /*createSitemapQueue()
 .then(() => {
