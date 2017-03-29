@@ -81,7 +81,7 @@ const unzipHttp = (url) => {
 
 const sendSitemap = (sitemap, pos) => {
 	return new Promise((resolve, reject) => {
-		if(sitemap.length == pos-1){
+		if(sitemap.length-1 == pos){
 			resolve(pos);
 		}else{
 			let url = sitemap[pos].loc[0];
@@ -106,9 +106,7 @@ const createSitemapQueue = () => {
 
 const sendUrlSet = (urlset, pos) => {
 	return new Promise((resolve, reject) => {
-		console.log(urlset.length);
-		console.log(pos-1)
-		if(urlset.length == pos-1){
+		if(urlset.length-1 == pos){
 			resolve(pos);
 		}else{
 			let matches = urlset[pos].loc[0].match(/^https:\/\/www\.woorank\.com\/en\/www\/(.+)/i);
