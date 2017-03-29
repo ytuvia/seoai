@@ -155,7 +155,12 @@ const readSitemapQueue = () => {
 			}else{
 				return null;
 			}
-		}).catch((err)=>{
+		}).then((result) => {
+			if(result){
+				return readSitemapQueue();
+			}
+		})
+		.catch((err)=>{
 			throw err;
 		})
 	})
