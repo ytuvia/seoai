@@ -194,7 +194,9 @@ const saveDoc = (counter) => {
 	});
 }
 
-createSitemapQueue()
+readSitemapQueue();
+
+/*createSitemapQueue()
 .then(() => {
 	return readSitemapQueue();
 })
@@ -203,4 +205,4 @@ createSitemapQueue()
 })
 .catch((err)=>{
 	throw err;
-})
+})*/
