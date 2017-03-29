@@ -106,6 +106,8 @@ const createSitemapQueue = () => {
 
 const sendUrlSet = (urlset, pos) => {
 	return new Promise((resolve, reject) => {
+		console.log(urlset.length);
+		console.log(pos-1)
 		if(urlset.length == pos-1){
 			resolve(pos);
 		}else{
