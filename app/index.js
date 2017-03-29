@@ -105,23 +105,22 @@ const createSitemapQueue = () => {
 }
 
 const sendUrlSet = (urlset, pos) => {
-	return new Promise((resolve, reject) => {
-		if(urlset.length-1 == pos){
-			resolve(pos);
-		}else{
-			let matches = urlset[pos].loc[0].match(/^https:\/\/www\.woorank\.com\/en\/www\/(.+)/i);
-			if(matches){
-				sqs.sendMessage('woorank-docs', matches[0]).then((result) => {
-					console.log('Added doc '+ matches[0])
-					return sendUrlSet(urlset, pos+1);
-				}).catch((err)=>{
-					reject(err)
-				});
-			}else{
+	if(urlset.length-1 == pos){
+		console.log('finished set');
+		return true;
+	}else{
+		let matches = urlset[pos].loc[0].match(/^https:\/\/www\.woorank\.com\/en\/www\/(.+)/i);
+		if(matches){
+			sqs.sendMessage('woorank-docs', matches[0]).then((result) => {
+				console.log('Added doc '+ matches[0])
 				return sendUrlSet(urlset, pos+1);
-			}
+			}).catch((err)=>{
+				return false
+			});
+		}else{
+			return sendUrlSet(urlset, pos+1);
 		}
-	})
+	}
 }
 
 const readSitemapQueue = () => {
