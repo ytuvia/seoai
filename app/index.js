@@ -149,6 +149,7 @@ const readSitemapQueue = () => {
 			}
 		})
 		.then((result) => {
+			console.log(result);
 			if(result){
 				return sqs.deleteMessage('woorank-sitemap', message.ReceiptHandle);
 			}else{
