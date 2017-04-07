@@ -1,0 +1,8 @@
+{
+	"title": "#criterium-title > div.criterium-content > div > p:nth-child(1)",
+	"description": "#criterium-description > div.criterium-content > div > p:nth-child(1)",
+	"seo": {
+		"headings":"#criterium-headings > div.criterium-content > div:nth-child(2) > table > tbody > tr",
+		"keywordCloud": "#criterium-keywords_cloud > div.criterium-content > div > ul > li"
+	}
+}

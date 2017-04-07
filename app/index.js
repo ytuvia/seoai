@@ -15,5 +15,5 @@ if(save){
 }
 
 if(scrap){
-	scrapper.getDocument();
+	scrapper.scrap();
 }
