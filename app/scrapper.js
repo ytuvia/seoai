@@ -3,13 +3,26 @@ import cheerio from 'cheerio'
 import _ from 'lodash'
 import selector from './selector.json'
 import * as db from './db'
+import winston from 'winston'
+
+let logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      level: 'info'
+    }),
+    new (winston.transports.File)({
+      name: 'error-file',
+      filename: 'logs/error.log',
+      level: 'error'
+    })
+  ]
+});
 
 AWS.config.update({
 	region:'us-west-2'
 })
 
 let s3 = new AWS.S3({apiVersion: '2006-03-01'});
-
 
 const scrapDocument = (key, doc) => {
 	const $ = cheerio.load(doc);
@@ -60,7 +73,7 @@ const pageDocuments = (marker) => {
 	  EncodingType: 'url',
 	  Marker: marker,
 	  Delimiter: ',',
-	  MaxKeys: 50
+	  MaxKeys: 2
 	};
 	return new Promise((resolve, reject) =>{
 		s3.listObjects(params, (err, data) => {
@@ -87,9 +100,10 @@ async function handleDocs(docs){
 	  		let scrap = scrapDocument(obj.Key, doc.Body.toString());
 	  		scrapps.push(scrap);
 		};
-		db.insertMany(scrapps);
+		let result = db.insertMany(scrapps);
+		logger.info(result);
 	}catch(err){
-		throw err;
+		logger.error(err);
 	}
 }
 
@@ -97,6 +111,6 @@ export async function scrap() {
 	try{
 		await pageDocuments();
 	}catch(err){
-		throw err;
+		logger.error(err);
 	}
 }

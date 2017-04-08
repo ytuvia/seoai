@@ -11,7 +11,6 @@ export const insertMany = (docs) => {
 			}else{
 				let collection = db.collection('websites');
 				collection.insertMany(docs, (err, result) => {
-					console.log(err, result);
 					if (err) {
 						reject(err);
 					}else{

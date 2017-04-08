@@ -4,7 +4,15 @@ import * as scrapper from './scrapper';
 let args = process.argv;
 let extract = args.indexOf('extract') > -1 ? true : false;
 let save = args.indexOf('save') > -1 ? true : false;
-let scrap = args.indexOf('scrap') > -1 ? true : false;
+let scrap = false;
+var marker = null;
+for(var arg of args){
+	let matches = arg.match(/^scrap=(.+)/i);
+	if(matches){
+		scrap = true;
+		marker = matches[1];
+	}
+}
 
 if(extract){
 	crawler.extractSitemap();
@@ -15,5 +23,5 @@ if(save){
 }
 
 if(scrap){
-	scrapper.scrap();
+	scrapper.scrap(marker);
 }
