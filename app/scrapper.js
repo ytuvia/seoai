@@ -73,7 +73,7 @@ const pageDocuments = (marker) => {
 	  EncodingType: 'url',
 	  Marker: marker,
 	  Delimiter: ',',
-	  MaxKeys: 2
+	  MaxKeys: 10
 	};
 	return new Promise((resolve, reject) =>{
 		s3.listObjects(params, (err, data) => {
