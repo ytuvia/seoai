@@ -8,7 +8,6 @@ let scrap = false;
 var marker = null;
 for(var arg of args){
 	let matches = arg.match(/^scrap=?(.+)?/i);
-	console.log(matches);
 	if(matches){
 		scrap = true;
 		marker = matches[1];
