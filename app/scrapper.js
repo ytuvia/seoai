@@ -100,7 +100,7 @@ async function handleDocs(docs){
 	  		let scrap = scrapDocument(obj.Key, doc.Body.toString());
 	  		scrapps.push(scrap);
 		};
-		let result = db.insertMany(scrapps);
+		let result = await db.insertMany(scrapps);
 		logger.info(result);
 	}catch(err){
 		logger.error(err);
