@@ -1,8 +1,15 @@
 {
 	"title": "#criterium-title > div.criterium-content > div > p:nth-child(1)",
 	"description": "#criterium-description > div.criterium-content > div > p:nth-child(1)",
-	"seo": {
-		"headings":"#criterium-headings > div.criterium-content > div:nth-child(2) > table > tbody > tr",
-		"keywordCloud": "#criterium-keywords_cloud > div.criterium-content > div > ul > li"
-	}
+	"meta": "#criterium-description > div.criterium-content > div > p:nth-child(1)",
+	"headings":"#criterium-headings > div.criterium-content > div:nth-child(2) > table > tbody > tr",
+	"keywords": "#criterium-keywords_cloud > div.criterium-content > div > ul > li",
+	"alt":{
+		"missing": "#criterium-images > div.criterium-content > div.part.text > p:nth-child(2)",
+		"attributs": "#criterium-images > div.criterium-content > div.part.table > table > tbody > tr"
+	},
+	"discovered":"#criterium-indexed_pages > div.criterium-content > div > div > span > span.colored-bar",
+	"links": "#criterium-links_details > div.criterium-content > div.part.table > table > tbody > tr:nth-child(1)",
+	"resolve": "#criterium-www_resolve > div.criterium-content > div > p",
+	"robots": "#criterium-robots_txt > div.criterium-content > div > p > a"
 }

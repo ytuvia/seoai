@@ -24,27 +24,74 @@ AWS.config.update({
 
 let s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
+const getScalarParam = (selector) => {
+	if(selector.children.length == 0){
+		return _trim(selector.text());
+	}else{
+		return "missing";
+	}
+}
+
 const scrapDocument = (key, doc) => {
 	const $ = cheerio.load(doc);
 	let scrap = {
 		key: key,
 		title: _.trim($(selector.title).text()),
 		description: _.trim($(selector.description).text()),
-		seo: {}
+		discovered: _.trim($(selector.discovered).text())
+		alt: {
+			missing: _.trim($(selector.alt.missing).text())
+		},
+		robots: _.trim($(selector.robots).text())
 	}
 
-	scrap.seo.headings = [];
-	$(selector.seo.headings).each((i, heading) => {
+	//meta
+	scrap.meta = getScalarParam($(selector.meta));
+
+	//resolve
+	scrap.resolve = getScalarParam($(selector.resolve));
+
+	//headings
+	scrap.headings = [];
+	$(selector.headings).each((i, heading) => {
 		let level = $(heading).children().first().first().text();
 		let text = $(heading).children().last().first().text();
-		scrap.seo.headings.push({level: _.trim(level), text: _.trim(text)});
+		scrap.headings.push({level: _.trim(level), text: _.trim(text)});
 	});
 
-	scrap.seo.keywordCloud = [];
-	$(selector.seo.keywordCloud).each((i, keyword) => {
+	//keywords
+	scrap.keywords = [];
+	$(selector.keywords).each((i, keyword) => {
 		let name = $(keyword).children().first().first().text();
 		let occourances = $(keyword).children().last().first().text();
-		scrap.seo.keywordCloud.push({name: _.trim(name), occourances: _.trim(occourances)});
+		scrap.keywords.push({name: _.trim(name), occourances: _.trim(occourances)});
+	});
+
+	//attributes
+	scrap.alt.attributs = [];
+	$(selector.alt.attributs).each((i, attr) => {
+		let hostname = $(attr).children().first().first().text();
+		let path = $(attr).children().first().last().text();
+		scrap.alt.attributs.push({hostname: _.trim(hostname), path: _.trim(path)});
+	});
+
+	//links
+	scrap.links = [];
+	$(selector.links).each((i, link) => {
+		let anchor = $(link).children().eq(0).first().text();
+		let type = $(link).children().eq(1).first().text();
+		let follow = $(link).children().eq(2).first().text();
+		scrap.links.push({anchor: _.trim(anchor), type: _.trim(type), follow: _.trim(follow)});
+	});
+
+	//related
+	scrap.relatd = [];
+	$(selector.relatd).each((i, website) => {
+		let url = $(website).children().eq(0).first().text();
+		let pages = $(website).children().eq(1).first().text();
+		let backlinks = $(website).children().eq(2).first().text();
+		let score = $(website).children().eq(3).first().text();
+		scrap.related.push({url: _.trim(url), pags: _.trim(pages), backlinks: _.trim(backlinks), , score: _.trim(score)});
 	});
 
 	return scrap;
