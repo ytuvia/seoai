@@ -35,9 +35,10 @@ const xmlFileToJson = (file) => {
 	})
 }
 
-const saveHttps = (url) => {
+export const saveHttps = (url) => {
 	return new Promise((resolve, reject) => {
 		let matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)(en\/www\/)(.+)/i);
+		console.log(url);
 		let dest = 'data/woorank/' + matches[3];
 		let upload = s3Stream(new AWS.S3()).upload({
 		  "Bucket": "woorank-docs",

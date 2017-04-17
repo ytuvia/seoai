@@ -3,20 +3,7 @@ import cheerio from 'cheerio'
 import _ from 'lodash'
 import selector from './selector.json'
 import * as db from './db'
-import winston from 'winston'
-
-let logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({
-      level: 'info'
-    }),
-    new (winston.transports.File)({
-      name: 'error-file',
-      filename: 'logs/error.log',
-      level: 'error'
-    })
-  ]
-});
+import logger from './logger'
 
 AWS.config.update({
 	region:'us-west-2'
@@ -25,8 +12,8 @@ AWS.config.update({
 let s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const getScalarParam = (selector) => {
-	if(selector.children().length() == 0){
-		let data = _trim(selector.text());
+	if(selector.children().length == 0){
+		let data = _.trim(selector.text());
 		if(data.match(/warning/i)){
 			return 'warning';
 		}else{
@@ -38,16 +25,24 @@ const getScalarParam = (selector) => {
 	}
 }
 
-const scrapDocument = (key, doc) => {
+export const scrapDocument = (key, doc) => {
 	const $ = cheerio.load(doc);
 	let scrap = {
-		key: key,
-		title: _.trim($(selector.title).text()),
-		description: _.trim($(selector.description).text()),
-		discovered: _.trim($(selector.discovered).text())
-		alt: {
-			missing: _.trim($(selector.alt.missing).text())
-		}
+		key: key
+	}
+
+	//title
+	scrap.title = _.trim($(selector.title).text());
+
+	//description
+	scrap.description = _.trim($(selector.description).text()),
+
+	//discovred
+	scrap.discovred = _.trim($(selector.discovered).text());
+
+	//missing alt
+	scrap.alt = {
+		missing: _.trim($(selector.alt.missing).text())
 	}
 
 	//meta
@@ -102,7 +97,7 @@ const scrapDocument = (key, doc) => {
 		let pages = $(website).children().eq(1).first().text();
 		let backlinks = $(website).children().eq(2).first().text();
 		let score = $(website).children().eq(3).first().text();
-		scrap.related.push({url: _.trim(url), pags: _.trim(pages), backlinks: _.trim(backlinks), , score: _.trim(score)});
+		scrap.related.push({url: _.trim(url), pags: _.trim(pages), backlinks: _.trim(backlinks), score: _.trim(score)});
 	});
 
 	return scrap;
@@ -131,7 +126,7 @@ const pageDocuments = (marker) => {
 	  EncodingType: 'url',
 	  Marker: marker,
 	  Delimiter: ',',
-	  MaxKeys: 10
+	  MaxKeys: 1
 	};
 	return new Promise((resolve, reject) =>{
 		s3.listObjects(params, (err, data) => {
@@ -158,8 +153,9 @@ async function handleDocs(docs){
 	  		let scrap = scrapDocument(obj.Key, doc.Body.toString());
 	  		scrapps.push(scrap);
 		};
-		let result = await db.insertMany(scrapps);
-		logger.info(result);
+		logger.info(JSON.stringify(scrapps));
+		//let result = await db.insertMany(scrapps);
+		//logger.info(result);
 	}catch(err){
 		logger.error(err);
 	}
