@@ -25,9 +25,15 @@ AWS.config.update({
 let s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const getScalarParam = (selector) => {
-	if(selector.children.length == 0){
-		return _trim(selector.text());
+	if(selector.children().length() == 0){
+		let data = _trim(selector.text());
+		if(data.match(/warning/i)){
+			return 'warning';
+		}else{
+			return data;
+		}
 	}else{
+		
 		return "missing";
 	}
 }
@@ -41,15 +47,11 @@ const scrapDocument = (key, doc) => {
 		discovered: _.trim($(selector.discovered).text())
 		alt: {
 			missing: _.trim($(selector.alt.missing).text())
-		},
-		robots: _.trim($(selector.robots).text())
+		}
 	}
 
 	//meta
 	scrap.meta = getScalarParam($(selector.meta));
-
-	//resolve
-	scrap.resolve = getScalarParam($(selector.resolve));
 
 	//headings
 	scrap.headings = [];
@@ -83,6 +85,15 @@ const scrapDocument = (key, doc) => {
 		let follow = $(link).children().eq(2).first().text();
 		scrap.links.push({anchor: _.trim(anchor), type: _.trim(type), follow: _.trim(follow)});
 	});
+
+	//broken links
+	scrap.broken = getScalarParam($(selector.broken));
+
+	//resolve
+	scrap.resolve = getScalarParam($(selector.resolve));
+
+	//robots
+	scrap.robots = getScalarParam($(selector.robots));
 
 	//related
 	scrap.relatd = [];

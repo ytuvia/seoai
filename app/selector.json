@@ -10,6 +10,7 @@
 	},
 	"discovered":"#criterium-indexed_pages > div.criterium-content > div > div > span > span.colored-bar",
 	"links": "#criterium-links_details > div.criterium-content > div.part.table > table > tbody > tr:nth-child(1)",
+	"missing": "#criterium-broken_links > div.criterium-content > div > p",
 	"resolve": "#criterium-www_resolve > div.criterium-content > div > p",
 	"robots": "#criterium-robots_txt > div.criterium-content > div > p > a"
 }
