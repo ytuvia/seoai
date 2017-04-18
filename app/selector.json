@@ -9,8 +9,19 @@
 		"attributs": "#criterium-images > div.criterium-content > div.part.table > table > tbody > tr"
 	},
 	"discovered":"#criterium-indexed_pages > div.criterium-content > div > div > span > span.colored-bar",
-	"links": "#criterium-links_details > div.criterium-content > div.part.table > table > tbody > tr:nth-child(1)",
-	"missing": "#criterium-broken_links > div.criterium-content > div > p",
+	"links": "#criterium-links_details > div.criterium-content > div.part.table > table > tbody > tr",
+	"broken": "#criterium-broken_links > div.criterium-content > div > p",
 	"resolve": "#criterium-www_resolve > div.criterium-content > div > p",
-	"robots": "#criterium-robots_txt > div.criterium-content > div > p > a"
+	"robots": "#criterium-robots_txt > div.criterium-content > div > p > a",
+	"sitemap": "#criterium-xml_sitemaps > div.criterium-content > div > p",
+	"url_underscore": "#criterium-underscores_url > div.criterium-content > div > p",
+	"blocking": "#criterium-blocking_factors > div.criterium-content > div",
+	"blog": "#criterium-blog > div.criterium-content > div > p",
+	"related": "#criterium-related_websites > div.criterium-content > div > table > tbody > tr",
+	"url": "#criterium-url > div.criterium-content > div > p:nth-child(1)",
+	"favicon": "#criterium-favicon > div.criterium-content > div > p > span",
+	"custom404": "#criterium-custom_404 > div.criterium-content > div > p",
+	"pagesize": "#criterium-page_size > div.criterium-content > div > p",
+	"loadtime": "#criterium-load_time > div.criterium-content > div > p",
+	"language": "#criterium-language > div.criterium-content > div > p"
 }

@@ -20,7 +20,6 @@ const getScalarParam = (selector) => {
 			return data;
 		}
 	}else{
-		
 		return "missing";
 	}
 }
@@ -90,15 +89,63 @@ export const scrapDocument = (key, doc) => {
 	//robots
 	scrap.robots = getScalarParam($(selector.robots));
 
+	//sitemap
+	scrap.sitemap = [];
+	$(selector.sitemap).each((i, map) => {
+		let url = $(map).children().first().text();
+		scrap.sitemap.push(url);
+	});
+
+	//url_underscore
+	scrap.url_underscore = getScalarParam($(selector.url_underscore));
+
+	//blocking factors
+	scrap.blocking = [];
+	$(selector.blocking).each((i, block) => {
+		let factor = $(block).children().first().children().eq(1).first().text();
+		scrap.blocking.push(_.trim(factor));
+	});
+
+	//blog
+	scrap.blog = getScalarParam($(selector.blog));
+	
 	//related
-	scrap.relatd = [];
-	$(selector.relatd).each((i, website) => {
+	scrap.related = [];
+	$(selector.related).each((i, website) => {
 		let url = $(website).children().eq(0).first().text();
 		let pages = $(website).children().eq(1).first().text();
 		let backlinks = $(website).children().eq(2).first().text();
 		let score = $(website).children().eq(3).first().text();
 		scrap.related.push({url: _.trim(url), pags: _.trim(pages), backlinks: _.trim(backlinks), score: _.trim(score)});
 	});
+
+	//url
+	scrap.url = getScalarParam($(selector.url));
+
+	//favicon
+	scrap.favicon = getScalarParam($(selector.favicon));
+
+	//custom404
+	scrap.custom404 = null;
+	$(selector.custom404).each((i, msg) => {
+		if($(msg).text())
+			scrap.custom404 += _.trim($(msg).text());
+	});
+
+	//pagesize
+	scrap.pagesize = getScalarParam($(selector.pagesize));
+
+	//load time
+	scrap.loadtime = getScalarParam($(selector.loadtime));
+
+	//language
+	scrap.language = [];
+	$(selector.language).each((i, lang) => {
+		let language = $(lang).children().text();
+		scrap.language.push(_.trim(language));
+	});
+
+
 
 	return scrap;
 }
