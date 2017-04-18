@@ -173,7 +173,7 @@ const pageDocuments = (marker) => {
 	  EncodingType: 'url',
 	  Marker: marker,
 	  Delimiter: ',',
-	  MaxKeys: 1
+	  MaxKeys: 10
 	};
 	return new Promise((resolve, reject) =>{
 		s3.listObjects(params, (err, data) => {
@@ -200,9 +200,9 @@ async function handleDocs(docs){
 	  		let scrap = scrapDocument(obj.Key, doc.Body.toString());
 	  		scrapps.push(scrap);
 		};
-		logger.info(JSON.stringify(scrapps));
-		//let result = await db.insertMany(scrapps);
-		//logger.info(result);
+		//logger.info(JSON.stringify(scrapps));
+		let result = await db.insertMany(scrapps);
+		logger.info(result);
 	}catch(err){
 		logger.error(err);
 	}
