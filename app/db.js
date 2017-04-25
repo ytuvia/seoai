@@ -26,18 +26,13 @@ export const insertMany = (docs) => {
 
 export const page = (limit, last) => {
 	return co(function*(){
-		let db = yield MongoClient.connect(uri);
+		let db = yield client.connect(uri);
 		let col = db.collection('websites');
 		let filter = {};
 		if(last){
 			filter = {_id:{$lte: last._id}}
 		}
-		let cursor = yield col.find().limit(limit).sort({_id:-1});
-		let docs = [];
-		while(yield cursor.hasNext()){
-			let doc = cursor.next();
-			docs.push(doc);
-		}
+		let docs = yield col.find(filter).limit(limit).sort({_id:-1}).toArray();
 		db.close();
 		return docs;
 	})

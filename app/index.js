@@ -1,5 +1,6 @@
 import * as crawler from './crawler';
 import * as scrapper from './scrapper';
+import * as populator from './populator';
 import * as s3 from './s3'
 import logger from './logger';
 
@@ -25,6 +26,7 @@ async function scrapDocument(key){
 let args = process.argv;
 let extract = args.indexOf('extract') > -1 ? true : false;
 let save = args.indexOf('save') > -1 ? true : false;
+let populate = args.indexOf('populate') > -1 ? true : false;
 let scrap = false;
 var marker = null;
 let doc = false;
@@ -56,4 +58,8 @@ if(doc){
 	scrapDocument(doc).then((scrap)=>{
 		logger.info(JSON.stringify(scrap));
 	});
+}
+
+if(populate){
+	populator.populateNeo();
 }
