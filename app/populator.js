@@ -13,7 +13,7 @@ export const populateNeo = (last) => {
 			statements.push({
 				statement: `CREATE (n:website { url: '${website.url}' }) RETURN n`
 			})
-			for(var keyword of website.keyword){
+			for(var keyword of website.keywords){
 				statements.push({
 					statement: `MATCH (a:website { url: '${website.url}' }), (b:keyword { name: '${keyword.name}' })
 					CREATE (a)-[:uses]->(b)`
