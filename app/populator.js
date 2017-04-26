@@ -10,14 +10,14 @@ export const populateNeo = (last) => {
 		let statements = [];
 		for(var website of page){
 			statements.push({
-				statement: `CREATE (n:website { url: '${website.url}' }) RETURN n`
+				statement: `CREATE (n:Website { url: '${website.url}' }) RETURN n`
 			})
 			for(var keyword of website.keywords){
 				statements.push({
-					statement: `CREATE (n:keyword { name: '${keyword.name}' }) RETURN n`
+					statement: `CREATE (n:Keyword { name: '${keyword.name}' }) RETURN n`
 				})
 				statements.push({
-					statement: `MATCH (a:website { url: '${website.url}' }), (b:keyword { name: '${keyword.name}' }) CREATE (a)-[:uses]->(b)`
+					statement: `MATCH (a:Website { url: '${website.url}' }), (b:Keyword { name: '${keyword.name}' }) CREATE (a)-[:USE_KEYWORD {occourances: ${keyword.occourances}}]->(b)`
 				})
 			}
 		}
