@@ -1,7 +1,7 @@
 import mongo from 'mongodb'
 import co from 'co';
 
-const uri = 'mongodb://ec2-54-148-65-153.us-west-2.compute.amazonaws.com:27017/seoai';
+const uri = 'mongodb://ec2-35-164-13-47.us-west-2.compute.amazonaws.com:27017/seoai';
 let client = mongo.MongoClient;
 
 export const insertMany = (docs) => {
