@@ -1,15 +1,9 @@
-import AWS from 'aws-sdk'
 import cheerio from 'cheerio'
 import _ from 'lodash'
 import selector from './selector.json'
 import * as db from './db'
 import logger from './logger'
-
-AWS.config.update({
-	region:'us-west-2'
-})
-
-let s3 = new AWS.S3({apiVersion: '2006-03-01'});
+import * as sqs from './sqs'
 
 const getScalarParam = (selector) => {
 	if(selector.children().length == 0){
@@ -181,7 +175,10 @@ const pageDocuments = (marker) => {
 		  	return reject(err);
 		  }
 		  else{
-		  	handleDocs(data.Contents);
+		  	//handleDocs(data.Contents);
+		  	for(var obj of data.Contents){
+		  		yeild sqs.sendMessage(obj.key)
+		  	}
 		  	if(data.IsTruncated){
 		      pageDocuments(data.NextMarker);
 			}else{
@@ -190,6 +187,15 @@ const pageDocuments = (marker) => {
 		  }
 		});
 	});
+}
+
+async function scrapDocuments(){
+	try{
+		var key = yeild sqs.reciveMessage();
+		var doc = yeild s3.
+	}catch(err){
+		logger.error(err);
+	}
 }
 
 async function handleDocs(docs){
@@ -211,6 +217,7 @@ async function handleDocs(docs){
 export async function scrap() {
 	try{
 		await pageDocuments();
+		await scrapDocuments();
 	}catch(err){
 		logger.error(err);
 	}
