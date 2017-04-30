@@ -6,10 +6,10 @@ AWS.config.update({
 
 let s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
-export const getObject = (key) => {
+export const getObject = (bucket, key) => {
 	return new Promise((resolve, reject) => {
 		let params = {
-		  Bucket: 'woorank-docs',
+		  Bucket: bucket,
 		  Key: 'data/woorank/' + key
 		};
 		s3.getObject(params, (err, data) => {
@@ -23,29 +23,21 @@ export const getObject = (key) => {
 	})
 }
 
-export const listObjects(marker){
-	let params = {
-	  Bucket: 'woorank-docs',
-	  EncodingType: 'url',
-	  Marker: marker,
-	  Delimiter: ',',
-	  MaxKeys: 10
-	};
-	s3.listObjects(params, (err, data) => {
-		  if (err){
-		  	return reject(err);
-		  }
-		  else{
-		  	//handleDocs(data.Contents);
-		  	for(var obj of data.Contents){
-		  		yeild sqs.sendMessage(obj.key)
-		  	}
-		  	if(data.IsTruncated){
-		      pageDocuments(data.NextMarker);
-			}else{
-				resolve('finished');
-			}
-		  }
+export const listObjects =(backet, marker, limit) => {
+	return new Promise((resolve, reject) => {
+		let params = {
+		  Bucket: bucket,
+		  EncodingType: 'url',
+		  Marker: marker,
+		  Delimiter: ',',
+		  MaxKeys: limit || 10
+		};
+		s3.listObjects(params, (err, data) => {
+			  if (err){
+			  	return reject(err);
+			  }else{
+				resolve(data);
+			  }
+		});
 	});
 }
-

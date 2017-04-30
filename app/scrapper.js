@@ -144,39 +144,12 @@ export const scrapDocument = (key, doc) => {
 	return scrap;
 }
 
-const getDocument = (key) => {
-	let params = {
-	  Bucket: 'woorank-docs', /* required */
-	  Key: key
-	};
-	return new Promise((resolve, reject) => {
-		s3.getObject(params, (err, data) => {
-			if(err){
-				return reject(err);
-			}else{
-				return resolve(data);
-			}
-		})
-	})
-}
-
 
 const pageDocuments = (marker) => {
-	let params = {
-	  Bucket: 'woorank-docs',
-	  EncodingType: 'url',
-	  Marker: marker,
-	  Delimiter: ',',
-	  MaxKeys: 10
-	};
 	return new Promise((resolve, reject) =>{
-		s3.listObjects(params, (err, data) => {
-		  if (err){
-		  	return reject(err);
-		  }
-		  else{
-		  	//handleDocs(data.Contents);
-		  	for(var obj of data.Contents){
+		try{
+			let data = s3.listObjects('woorank-docs', marker, 10);
+			for(var obj of data.Contents){
 		  		yeild sqs.sendMessage(obj.key)
 		  	}
 		  	if(data.IsTruncated){
@@ -184,30 +157,31 @@ const pageDocuments = (marker) => {
 			}else{
 				resolve('finished');
 			}
-		  }
-		});
+		}catch(err){
+			reject(err);
+		}
 	});
 }
 
 async function scrapDocuments(){
-	try{
-		var key = yeild sqs.reciveMessage();
-		var doc = yeild s3.
-	}catch(err){
-		logger.error(err);
-	}
+	return new Promise((resolve, reject) => {
+		try{
+			let key = yeild sqs.reciveMessage('woorank-keys');
+			if(!key){
+				resolve('finished scrapping the queue.');
+			}
+			let doc = yeild s3.getObject('woorank-docs', key);
+			let result = yeild handleDoc(doc);
+		}catch(err){
+			reject(err);
+		}
+	})
 }
 
-async function handleDocs(docs){
+async function handleDocs(doc){
 	try{
-		let scrapps = [];
-		for(var obj of docs){
-	  		let doc = await getDocument(obj.Key);
-	  		let scrap = scrapDocument(obj.Key, doc.Body.toString());
-	  		scrapps.push(scrap);
-		};
-		//logger.info(JSON.stringify(scrapps));
-		let result = await db.insertMany(scrapps);
+	  	let scrap = scrapDocument(obj.Key, doc.Body.toString());
+		let result = await db.insert(scrap);
 		logger.info(result);
 	}catch(err){
 		logger.error(err);

@@ -24,6 +24,26 @@ export const insertMany = (docs) => {
 	})
 }
 
+export const insert = (doc) => {
+	return new Promise((resolve, reject) => {
+		client.connect(uri, (err, db) => {
+			if(err){
+				reject(err);
+			}else{
+				let collection = db.collection('websites');
+				collection.insert(doc, (err, result) => {
+					if (err) {
+						reject(err);
+					}else{
+						db.close();
+						resolve(result);
+					}
+				})
+			}
+		})
+	})
+}
+
 export const page = (limit, last) => {
 	return co(function*(){
 		let db = yield client.connect(uri);
