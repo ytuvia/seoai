@@ -10,7 +10,7 @@ export const getObject = (bucket, key) => {
 	return new Promise((resolve, reject) => {
 		let params = {
 		  Bucket: bucket,
-		  Key: 'data/woorank/' + key
+		  Key: key
 		};
 		s3.getObject(params, (err, data) => {
 		  if (err) {
@@ -23,7 +23,7 @@ export const getObject = (bucket, key) => {
 	})
 }
 
-export const listObjects =(backet, marker, limit) => {
+export const listObjects =(bucket, marker, limit) => {
 	return new Promise((resolve, reject) => {
 		let params = {
 		  Bucket: bucket,

@@ -4,6 +4,7 @@ import selector from './selector.json'
 import * as db from './db'
 import logger from './logger'
 import * as sqs from './sqs'
+import * as s3 from './s3'
 
 const getScalarParam = (selector) => {
 	if(selector.children().length == 0){
@@ -145,44 +146,40 @@ export const scrapDocument = (key, doc) => {
 }
 
 
-const pageDocuments = (marker) => {
-	return new Promise((resolve, reject) =>{
-		try{
-			let data = s3.listObjects('woorank-docs', marker, 10);
-			for(var obj of data.Contents){
-		  		yeild sqs.sendMessage(obj.key)
-		  	}
-		  	if(data.IsTruncated){
-		      pageDocuments(data.NextMarker);
-			}else{
-				resolve('finished');
-			}
-		}catch(err){
-			reject(err);
+async function pageDocuments(marker){
+	try{
+		let data = await s3.listObjects('woorank-docs', marker, 10);
+		for(var obj of data.Contents){
+			logger.info('adding website ', obj.Key, ' to queue');
+	  		let resilt = await sqs.sendMessage('woorank-keys', obj.Key);
+	  	}
+	  	if(data.IsTruncated){
+	      pageDocuments(data.NextMarker);
+		}else{
+			return 'finished';
 		}
-	});
+	}catch(err){
+		throw err
+	}
 }
 
 async function scrapDocuments(){
-	return new Promise((resolve, reject) => {
-		try{
-			let key = yeild sqs.reciveMessage('woorank-keys');
-			if(!key){
-				resolve('finished scrapping the queue.');
-			}
-			let doc = yeild s3.getObject('woorank-docs', key);
-			let result = yeild handleDoc(doc);
-		}catch(err){
-			reject(err);
-		}
-	})
+	let message = await sqs.reciveMessage('woorank-keys');
+	if(!message.Messages){
+		return 'finished scrapping the queue.';
+	}
+	let key = message.Messages[0].Body
+	let doc = await s3.getObject('woorank-docs', key);
+	await handleDoc(key, doc.Body.toString());
+	await sqs.deleteMessage('woorank-sitemap', message.ReceiptHandle)
+	return scrapDocuments();
 }
 
-async function handleDocs(doc){
+async function handleDoc(key, doc){
 	try{
-	  	let scrap = scrapDocument(obj.Key, doc.Body.toString());
+	  	let scrap = scrapDocument(key, doc);
 		let result = await db.insert(scrap);
-		logger.info(result);
+		logger.info('added ', key, ' to mongo' );
 	}catch(err){
 		logger.error(err);
 	}
@@ -190,7 +187,7 @@ async function handleDocs(doc){
 
 export async function scrap() {
 	try{
-		await pageDocuments();
+		//await pageDocuments();
 		await scrapDocuments();
 	}catch(err){
 		logger.error(err);
