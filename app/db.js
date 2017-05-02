@@ -31,15 +31,15 @@ export const insert = (doc) => {
 				reject(err);
 			}else{
 				let collection = db.collection('websites');
-				collection.insert(doc, (err, result) => {
+				collection.insertOne(doc, (err, result) => {
 					if (err) {
 						reject(err);
 					}else{
-						db.close();
 						resolve(result);
 					}
 				})
 			}
+			db.close();
 		})
 	})
 }

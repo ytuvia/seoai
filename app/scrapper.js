@@ -172,9 +172,10 @@ async function scrapDocuments(){
 	}
 	let message = envelope.Messages[0];
 	let key = message.Body
+	logger.info('Scrapping ', key, ' to mongo');
 	let doc = await s3.getObject('woorank-docs', key);
-	await handleDoc(key, doc.Body.toString());
-	await sqs.deleteMessage('woorank-keys', message.ReceiptHandle)
+	let scrap = await handleDoc(key, doc.Body.toString());
+	let result = await sqs.deleteMessage('woorank-keys', message.ReceiptHandle)
 	return scrapDocuments();
 }
 
@@ -190,8 +191,8 @@ async function handleDoc(key, doc){
 
 export async function scrap() {
 	try{
-		await pageDocuments();
-		//await scrapDocuments();
+		//await pageDocuments();
+		await scrapDocuments();
 	}catch(err){
 		logger.error(err);
 	}
