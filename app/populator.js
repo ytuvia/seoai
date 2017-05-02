@@ -3,12 +3,15 @@ import * as neo from './neo'
 import co from 'co'
 import logger from './logger'
 
+let total = 0;
+
 export const populateNeo = (last) => {
 	const limit = 10;
 	co(function*(){
 		let page = yield db.page(limit, last);
 		let statements = [];
 		for(var website of page){
+			logger.info('Adding ', website.key, ' to Neo');
 			statements.push({
 				statement: `MERGE (Website { url: '${website.url}' }) RETURN Website`
 			})
@@ -22,12 +25,13 @@ export const populateNeo = (last) => {
 			}
 		}
 		let result = yield neo.cypher(statements);
-		logger.info('Added ', limit, ' more websites');
+		total += page.length;
+		logger.info('Added ', total, ' websites sofar');
 		if(page.length == limit){
 			last = page[page.length-1];
 			return populateNeo(last);
 		}else{
-			logger.info('done populating neo');
+			logger.info('done populating', total, 'websites to neo');
 		}
 	});
 }

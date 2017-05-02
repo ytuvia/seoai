@@ -111,7 +111,7 @@ export const scrapDocument = (key, doc) => {
 		let pages = $(website).children().eq(1).first().text();
 		let backlinks = $(website).children().eq(2).first().text();
 		let score = $(website).children().eq(3).first().text();
-		scrap.related.push({url: _.trim(url), pags: _.trim(pages), backlinks: _.trim(backlinks), score: _.trim(score)});
+		scrap.related.push({url: _.trim(url), pages: _.trim(pages), backlinks: _.trim(backlinks), score: _.trim(score)});
 	});
 
 	//url
@@ -191,7 +191,7 @@ async function handleDoc(key, doc){
 export async function scrap() {
 	try{
 		await pageDocuments();
-		await scrapDocuments();
+		//await scrapDocuments();
 	}catch(err){
 		logger.error(err);
 	}
