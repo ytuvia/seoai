@@ -4,25 +4,6 @@ import * as populator from './populator';
 import * as s3 from './s3'
 import logger from './logger';
 
-async function scrapDocument(key){
-	try{
-		let doc = false; 
-		try{
-			doc = await s3.getObject(key);
-		}catch(err){
-			//nada
-		}
-		if(!doc){
-			await crawler.saveHttps('https://www.woorank.com/en/www/'+key);
-			doc = await s3.getObject(key);
-		}
-		let scrap = scrapper.scrapDocument(doc.Key, doc.Body.toString());
-		return scrap;
-	}catch(err){
-		logger.error(err);
-	}
-}
-
 let args = process.argv;
 let extract = args.indexOf('extract') > -1 ? true : false;
 let save = args.indexOf('save') > -1 ? true : false;
@@ -55,7 +36,7 @@ if(scrap){
 }
 
 if(doc){
-	scrapDocument(doc).then((scrap)=>{
+	scrapper.getDocument(doc).then((scrap)=>{
 		logger.info(JSON.stringify(scrap));
 	});
 }

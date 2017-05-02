@@ -5,6 +5,7 @@ import * as db from './db'
 import logger from './logger'
 import * as sqs from './sqs'
 import * as s3 from './s3'
+import * as crawler from './crawler'
 
 const getScalarParam = (selector) => {
 	if(selector.children().length == 0){
@@ -140,28 +141,7 @@ export const scrapDocument = (key, doc) => {
 		scrap.language.push(_.trim(language));
 	});
 
-
-
 	return scrap;
-}
-
-
-async function pageDocuments(marker){
-	try{
-		let data = await s3.listObjects('woorank-docs', marker, 10);
-		for(var obj of data.Contents){
-			logger.info('adding website ', obj.Key, ' to queue');
-	  		let resilt = await sqs.sendMessage('woorank-keys', obj.Key);
-	  	}
-	  	if(data.IsTruncated){
-	      pageDocuments(data.NextMarker);
-		}else{
-			logger.info('Finished indexing');
-			return
-		}
-	}catch(err){
-		throw err
-	}
 }
 
 async function scrapDocuments(){
@@ -191,8 +171,26 @@ async function handleDoc(key, doc){
 
 export async function scrap() {
 	try{
-		//await pageDocuments();
 		await scrapDocuments();
+	}catch(err){
+		logger.error(err);
+	}
+}
+
+export async function getDocument(key){
+	try{
+		let doc = false; 
+		try{
+			doc = await s3.getObject(key);
+		}catch(err){
+			//nada
+		}
+		if(!doc){
+			await crawler.saveHttps('https://www.woorank.com/en/www/'+key);
+			doc = await s3.getObject(key);
+		}
+		let scrap = scrapper.scrapDocument(doc.Key, doc.Body.toString());
+		return scrap;
 	}catch(err){
 		logger.error(err);
 	}
