@@ -2,7 +2,16 @@ import * as sqs from './sqs'
 import * as s3 from './s3'
 import co from 'co'
 
-export const create = () => {
+export const create = (source) => {
+	switch(source){
+		case 'mongo':
+			pageMongoDocuments();
+			break;
+		case 's3':
+		default:
+			pageS3Documents();
+			break;
+	}
 	return await pageS3Documents();
 }
 
