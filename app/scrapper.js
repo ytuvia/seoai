@@ -190,7 +190,7 @@ async function handleDoc(key, doc){
 
 export async function scrap() {
 	try{
-		//await pageDocuments();
+		await pageDocuments();
 		await scrapDocuments();
 	}catch(err){
 		logger.error(err);
