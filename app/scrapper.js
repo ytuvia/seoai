@@ -156,7 +156,8 @@ async function pageDocuments(marker){
 	  	if(data.IsTruncated){
 	      pageDocuments(data.NextMarker);
 		}else{
-			return 'finished';
+			logger.info('Finished indexing');
+			return
 		}
 	}catch(err){
 		throw err
@@ -164,14 +165,16 @@ async function pageDocuments(marker){
 }
 
 async function scrapDocuments(){
-	let message = await sqs.reciveMessage('woorank-keys');
-	if(!message.Messages){
-		return 'finished scrapping the queue.';
+	let envelope = await sqs.reciveMessage('woorank-keys');
+	if(!envelope.Messages){
+		logger.info('finished scrapping the queue.');
+		return;
 	}
-	let key = message.Messages[0].Body
+	let message = envelope.Messages[0];
+	let key = message.Body
 	let doc = await s3.getObject('woorank-docs', key);
 	await handleDoc(key, doc.Body.toString());
-	await sqs.deleteMessage('woorank-sitemap', message.ReceiptHandle)
+	await sqs.deleteMessage('woorank-keys', message.ReceiptHandle)
 	return scrapDocuments();
 }
 
