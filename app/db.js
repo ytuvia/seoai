@@ -58,4 +58,14 @@ export const page = (limit, last) => {
 	})
 }
 
+export const findByKey = (key) => {
+	return co(function*(){
+		let db = yield client.connect(uri);
+		let col = db.collection('websites');
+		let doc = yield col.findOne({'key':key});
+		db.close();
+		return doc;
+	})
+}
+
 
