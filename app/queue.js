@@ -1,5 +1,7 @@
 import * as sqs from './sqs'
 import * as s3 from './s3'
+import * as db from './db'
+import logger from './logger'
 import co from 'co'
 
 export const create = (source) => {
@@ -12,7 +14,6 @@ export const create = (source) => {
 			pageS3Documents();
 			break;
 	}
-	return await pageS3Documents();
 }
 
 async function pageS3Documents(marker){
@@ -40,7 +41,7 @@ export const pageMongoDocuments = (last) => {
 		let statements = [];
 		for(var website of page){
 			logger.info('Adding ', website.key, ' to queue');
-			yield sqs.sendMessage('woorank-keys', website.key);
+			yield sqs.sendMessage('woorank-keys-neo', website.key);
 		}
 		if(page.length == limit){
 			last = page[page.length-1];

@@ -14,7 +14,9 @@ let doc = false;
 for(var arg of args){
 	let matches = arg.match(/^queue=?(.+)?/i);
 	if(matches){
-		queueCmd.source = matches[1];
+		queueCmd = {
+			source: matches[1]
+		}
 	}
 	matches = arg.match(/^doc=?(.+)?/i);
 	if(matches){
