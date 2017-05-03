@@ -30,7 +30,7 @@ const populateNeo = (website) => {
 				statement: `MERGE (n:Keyword { name: '${keyword.name}' }) RETURN n`
 			})
 			statements.push({
-				statement: `MATCH (a:Website { url: '${website.url}' }), (b:Keyword { name: '${keyword.name}' }) CREATE (a)-[:USE_KEYWORD {occourances: ${keyword.occourances}}]->(b)`
+				statement: `MATCH (a:Website { url: '${website.url}' }), (b:Keyword { name: '${keyword.name}' }) MERGE (a)-[:USE_KEYWORD {occourances: ${keyword.occourances}}]->(b)`
 			})
 		}
 		yield neo.cypher(statements);
