@@ -162,7 +162,7 @@ async function scrapDocuments(){
 async function handleDoc(key, doc){
 	try{
 	  	let scrap = scrapDocument(key, doc);
-		let result = await db.insert(scrap);
+		let result = await db.update(scrap);
 		logger.info('added ', key, ' to mongo' );
 	}catch(err){
 		logger.error(err);

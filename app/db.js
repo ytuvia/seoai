@@ -44,6 +44,17 @@ export const insert = (doc) => {
 	})
 }
 
+export const update = (obj) => {
+	return co(function*(){
+		let db = yield client.connect(uri);
+		let col = db.collection('websites');
+		let doc = yield col.update({key:obj.key}, obj, {upsert:true});
+		db.close();
+		return doc;
+	})
+}
+
+
 export const page = (limit, last) => {
 	return co(function*(){
 		let db = yield client.connect(uri);
