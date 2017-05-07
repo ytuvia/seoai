@@ -27,7 +27,7 @@ export const listen = () => {
 
 	router.get('/website/:url/related', (req, res) => {
 		let url = req.params.url;
-		website.related(url, 1000).then((result) => {
+		website.related(url, 25).then((result) => {
 			res.json(result);
 		}).catch((err) => {
 			res.status(500).send(err);

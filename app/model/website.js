@@ -1,4 +1,6 @@
 import * as neo from '../neo'
+import * as db from '../db'
+import co from 'co';
 
 export const search = (query, limit) => {
 	return new Promise((resolve, reject) => {
@@ -19,15 +21,26 @@ export const search = (query, limit) => {
 }
 
 export const related = (url, limit) => {
-	return new Promise((resolve, reject) => {
+	return co(function*(){
 		limit = limit || 25;
 		let statement = {
 			query: `MATCH (a:Website{url:'${url}'})-[r:USE_KEYWORD]-(b:Keyword)-[w:USE_KEYWORD]-(c:Website)  RETURN c.url, r.occourances, b.name  ORDER BY r.occourances DESC LIMIT ${limit}`
 		}
-		neo.cypher(statement).then((result) => {
-			resolve(result.data);
-		}).catch((err)=> {
-			reject(err);
-		});
+		let result = yield neo.cypher(statement);
+		let websites = [];
+		for(var col of result.data){
+			let url = col[0];
+			let occourances = col[1];
+			let keyword = col[2]
+			let website = yield db.findByKey('data/woorank/'+url);
+
+			websites.push({
+				url: url,
+				occourances: occourances,
+				similarKeyword: keyword,
+				info: website
+			})
+		}
+		return websites;
 	})
 }
