@@ -32,6 +32,7 @@
     "queue-s3": "nodemon app/index.js queue=s3 --exec babel-node --presets latest stage-3",
     "scrap": "nodemon app/index.js scrap --exec babel-node --presets latest stage-3",
     "populate": "nodemon app/index.js populate --exec babel-node --presets latest stage-3",
+    "rest": "nodemon app/index.js rest --exec babel-node --presets latest stage-3",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

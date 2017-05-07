@@ -2,13 +2,15 @@ import * as crawler from './crawler';
 import * as scrapper from './scrapper';
 import * as populator from './populator';
 import * as queue from './queue'
-import logger from './logger';
+import * as restServer from './rest'
+import logger from './logger'
 
 let args = process.argv;
 let extract = args.indexOf('extract') > -1 ? true : false;
 let save = args.indexOf('save') > -1 ? true : false;
 let populate = args.indexOf('populate') > -1 ? true : false;
 let scrap = args.indexOf('scrap') > -1 ? true : false;
+let rest = args.indexOf('rest') > -1 ? true : false;
 let queueCmd = false;
 let doc = false;
 for(var arg of args){
@@ -33,7 +35,7 @@ if(save){
 }
 
 if(scrap){
-	scrapper.scrap();
+	scrapper.scrap();n
 }
 
 if(queueCmd){
@@ -48,4 +50,8 @@ if(doc){
 
 if(populate){
 	populator.populate();
+}
+
+if(rest){
+	restServer.listen();
 }

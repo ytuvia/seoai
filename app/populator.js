@@ -33,6 +33,6 @@ const populateNeo = (website) => {
 				statement: `MATCH (a:Website { url: '${website.url}' }), (b:Keyword { name: '${keyword.name}' }) MERGE (a)-[:USE_KEYWORD {occourances: ${keyword.occourances}}]->(b)`
 			})
 		}
-		yield neo.cypher(statements);
+		yield neo.commit(statements);
 	});
 }
