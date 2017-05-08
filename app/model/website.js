@@ -38,7 +38,7 @@ export const related = (url, limit) => {
 			websites.push({
 				url: url,
 				occourances: col[1],
-				similiarKeywords: col[2],
+				similarKeywords: col[2],
 				info: website
 			})
 		}
