@@ -24,20 +24,20 @@ export const related = (url, limit) => {
 	return co(function*(){
 		limit = limit || 25;
 		let statement = {
-			query: `MATCH (a:Website{url:'${url}'})-[r:USE_KEYWORD]-(b:Keyword)-[w:USE_KEYWORD]-(c:Website)  RETURN c.url, r.occourances, b.name  ORDER BY r.occourances DESC LIMIT ${limit}`
+			query: `MATCH (a:Website)-[r:USE_KEYWORD]->(b:Keyword)<-[w:USE_KEYWORD]-(c:Website) 
+			WHERE a.url='${url}' AND c.url <> ''
+			RETURN c.url, AVG(r.occourances)*SUM(r.occourances) as occourances  ORDER BY occourances DESC LIMIT ${limit}`
 		}
 		let result = yield neo.cypher(statement);
 		let websites = [];
 		for(var col of result.data){
 			let url = col[0];
-			let occourances = col[1];
-			let keyword = col[2]
+			let occourances = col[1]
 			let website = yield db.findByKey('data/woorank/'+url);
 
 			websites.push({
 				url: url,
 				occourances: occourances,
-				similarKeyword: keyword,
 				info: website
 			})
 		}
