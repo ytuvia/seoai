@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import bodyParser from 'body-parser'
 import pkg from '../package.json'
 import logger from './logger'
@@ -6,6 +7,9 @@ import * as website from './model/website'
 
 export const listen = () => {
 	let app = express();
+
+	app.use(cors())
+
 	app.use(bodyParser.urlencoded({extended: true}));
 	app.use(bodyParser.json());
 
