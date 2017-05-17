@@ -35,7 +35,7 @@ if(save){
 }
 
 if(scrap){
-	scrapper.scrap();n
+	scrapper.scrap();
 }
 
 if(queueCmd){

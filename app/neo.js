@@ -1,8 +1,8 @@
 import rpn from 'request-promise-native'
 
-const uri = 'http://ec2-35-167-18-73.us-west-2.compute.amazonaws.com:7474/db/data'
-const user = 'seoai'
-const password = 'Seo1357'
+const uri = 'http://'+ process.env.NEO_SERVER +'/db/data'
+const user = process.env.NEO_USER;
+const password = process.env.NEO_PASSWORD;
 
 export const commit = (statements) => {
 	var options = {
